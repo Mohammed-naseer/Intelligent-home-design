@@ -1,9 +1,12 @@
-"""NeoArchAI - Application Entry Point
+"""
+AI House Architect — Application Entry Point
+Local-ML powered adaptive 3D residential design & visualization system.
 
-Launches the FastAPI server with:
-  - REST API  at  /api/...
-  - Static UI at  /
-  - API docs  at  /docs  (Swagger) and /redoc
+Endpoints:
+  REST API  →  /api/...
+  Swagger   →  /docs
+  ReDoc     →  /redoc
+  Frontend  →  http://localhost:8080/ (served from Vite dev server in development)
 """
 from __future__ import annotations
 
@@ -19,35 +22,32 @@ from fastapi.staticfiles import StaticFiles
 
 from api.routes import router
 
-# ── Logging ───────────────────────────────────────────────────────────────────
+# ── Logging ────────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-logger = logging.getLogger("neoarchai")
+logger = logging.getLogger("ai-house-architect")
 
-# ── FastAPI app ───────────────────────────────────────────────────────────────
+# ── FastAPI App ────────────────────────────────────────────────────────────────
 app = FastAPI(
-    title="NeoArchAI",
+    title="AI House Architect",
     description=(
-        "Agentic House Architecture Design System powered by LangGraph + CrewAI.\n\n"
-        "Generates complete designs at three levels:\n"
-        "1. **Basic Design** – Room schedule, materials, cost estimate\n"
-        "2. **2D Layout** – Professional architectural floor plans (PNG + SVG)\n"
-        "3. **3D Model** – Interactive Plotly 3D visualization (HTML)\n\n"
-        "All free – uses Groq (free tier) or Ollama (local) as LLM backend."
+        "Adaptive 3D Residential Design & Visualization System.\n\n"
+        "**No external AI APIs** — intelligence is powered entirely by:\n"
+        "- Local **PyTorch** neural network (layout prediction)\n"
+        "- Local **Scikit-Learn** random forest (quality scoring)\n"
+        "- **Shapely** geometry constraint engine (overlap & boundary validation)\n"
+        "- **Pareto optimization** (multi-objective design selection)\n\n"
+        "Generates ranked floor-plan candidates with 3D specs, cost estimates & cultural alignment."
     ),
-    version="1.0.0",
-    contact={
-        "name":  "NeoArchAI",
-        "url":   "https://github.com/neoarchai",
-        "email": "hello@neoarchai.ai",
-    },
+    version="2.0.0",
+    contact={"name": "AI House Architect"},
     license_info={"name": "MIT"},
 )
 
-# ── CORS ──────────────────────────────────────────────────────────────────────
+# ── CORS ───────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -56,69 +56,62 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── API routes ────────────────────────────────────────────────────────────────
+# ── API Routes ─────────────────────────────────────────────────────────────────
 app.include_router(router, prefix="/api")
 
-# ── Static files ──────────────────────────────────────────────────────────────
-static_dir = Path(__file__).parent / "static"
-static_dir.mkdir(exist_ok=True)
-app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+# ── Serve built frontend (production) ──────────────────────────────────────────
+frontend_dist = Path(__file__).parent / "frontend" / "dist"
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="frontend")
 
 
-@app.get("/", include_in_schema=False)
-async def serve_ui() -> FileResponse:
-    """Serve the main UI."""
-    return FileResponse(str(static_dir / "index.html"))
-
-
-# ── Startup / Shutdown events ─────────────────────────────────────────────────
-
+# ── Startup ────────────────────────────────────────────────────────────────────
 @app.on_event("startup")
-async def _startup():
-    from config import (
-        OUTPUT_DIR, LLM_PROVIDER, LLM_MODEL,
-        GROQ_API_KEY, GEMINI_API_KEY, OPENAI_API_KEY,
-        TOGETHER_API_KEY, COHERE_API_KEY, OPENAI_COMPAT_BASE_URL,
-    )
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    _key_map = {
-        "groq": bool(GROQ_API_KEY),
-        "gemini": bool(GEMINI_API_KEY),
-        "openai": bool(OPENAI_API_KEY),
-        "together": bool(TOGETHER_API_KEY),
-        "cohere": bool(COHERE_API_KEY),
-        "ollama": True,
-        "openai-compat": bool(OPENAI_COMPAT_BASE_URL),
-        "none": False,
-    }
-    llm_ready = _key_map.get(LLM_PROVIDER, False)
+async def _startup() -> None:
+    base_dir = Path(__file__).parent
+
+    # Auto-train if models are missing
+    layout_pt  = base_dir / "models" / "layout_model" / "pytorch_layout_model.pt"
+    quality_pkl = base_dir / "models" / "quality_model" / "quality_regressor.pkl"
+
+    if not layout_pt.exists() or not quality_pkl.exists():
+        logger.info("Pre-trained models not found — running training bootstrap...")
+        try:
+            from datasets.synthetic_generator import generate_dataset
+            dataset_dir = base_dir / "datasets" / "processed"
+            generate_dataset(str(dataset_dir), num_samples=400)
+
+            from training.train_layout_model import train_layout_model
+            train_layout_model(epochs=20)
+
+            from training.train_quality_model import train_quality_model
+            train_quality_model()
+
+            logger.info("Auto-training complete.")
+        except Exception as exc:
+            logger.warning("Auto-training failed (%s). Using procedural fallback.", exc)
+    else:
+        logger.info("Pre-trained models found — skipping auto-training.")
+
     logger.info("=" * 60)
-    logger.info("NeoArchAI started")
-    logger.info("  LLM Provider : %s", LLM_PROVIDER)
-    logger.info("  LLM Model    : %s", LLM_MODEL)
-    logger.info("  LLM Ready    : %s", llm_ready)
-    if not llm_ready:
-        logger.info("  (using algorithmic fallback — set API key in .env to enable AI)")
-    logger.info("  API docs     : http://localhost:8080/docs")
-    logger.info("  UI           : http://localhost:8080/")
+    logger.info("AI House Architect v2.0 — Ready")
+    logger.info("  API Docs : http://localhost:8080/docs")
+    logger.info("  ReDoc    : http://localhost:8080/redoc")
+    logger.info("  Frontend : http://localhost:5173/ (Vite dev server)")
     logger.info("=" * 60)
 
 
 @app.on_event("shutdown")
-async def _shutdown():
-    logger.info("NeoArchAI shutting down.")
+async def _shutdown() -> None:
+    logger.info("AI House Architect shutting down.")
 
 
-# ── Entry point ───────────────────────────────────────────────────────────────
-
+# ── Entry Point ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    from config import APP_HOST, APP_PORT, DEBUG
-
     uvicorn.run(
         "main:app",
-        host=APP_HOST,
-        port=APP_PORT,
-        reload=DEBUG,
+        host="0.0.0.0",
+        port=8080,
+        reload=True,
         log_level="info",
-        access_log=True,
     )

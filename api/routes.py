@@ -1,313 +1,208 @@
-"""NeoArchAI - FastAPI Routes
+"""
+AI House Architect — FastAPI Routes
 
-Endpoints:
-  POST /api/design                   – Start new design (async)
-  GET  /api/design/{id}              – Poll status + results
-  GET  /api/design/{id}/stream       – SSE progress stream
-  GET  /api/files/{id}/{filename}    – Serve output files
-  GET  /api/designs                  – List recent designs
-  DELETE /api/design/{id}            – Delete design
+All intelligence is local (no external AI APIs):
+  POST /api/v2/generate-designs      — Full pipeline: analyze → layout → optimize → score
+  POST /api/v2/analyze-requirements  — Parse raw user input into normalized spec
+  POST /api/v2/whatif-redesign       — Apply What-If change and re-optimize
+  POST /api/v2/cost-estimate         — Construction cost breakdown
+  POST /api/v2/cultural-evaluation   — Cultural / Vastu alignment score
+  POST /api/v2/feedback              — Log user design feedback for adaptive retraining
+  POST /api/v2/trigger-retrain       — Trigger background model retraining
+  GET  /api/v2/analytics             — Usage and model performance analytics
+  GET  /api/v2/evaluation-metrics    — Benchmark: Baseline vs ML vs Optimized
+  GET  /api/health                   — Health check
 """
 from __future__ import annotations
 
-import asyncio
-import json
 import logging
-import uuid
-from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi import APIRouter, HTTPException
 
-from config import OUTPUT_DIR
-from models.schemas import (
-    DesignInitResponse, DesignRequest, DesignResult, DesignStatus
-)
-from graph.design_graph import design_graph
+from ai.requirement_analyzer import requirement_analyzer
+from ai.cultural_engine import cultural_engine
+from ai.cost_engine import cost_engine
+from ai.whatif_engine import whatif_engine
+from ai.adaptive_pipeline import adaptive_pipeline
+from optimization.layout_optimizer import layout_optimizer
+from training.evaluate_model import run_benchmark_evaluation
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-# ── In-memory design registry ──────────────────────────────────────────────────
-# { design_id: DesignResult dict }
-_designs: Dict[str, dict] = {}
 
-
-# ── Background task: run the LangGraph pipeline ──────────────────────────────
-
-async def _run_design_pipeline(design_id: str, requirements: dict) -> None:
-    """Execute the LangGraph design pipeline and update the registry."""
-    _designs[design_id]["status"]       = DesignStatus.ANALYZING
-    _designs[design_id]["current_stage"]= "analyzing"
-    _designs[design_id]["progress"]     = 5
-
-    initial_state = {
-        "design_id":    design_id,
-        "requirements": requirements,
-        "basic_design": {},
-        "floor_plans":  [],
-        "model_3d":     {},
-        "report_url":   "",
-        "current_stage":"start",
-        "progress":     0,
-        "errors":       [],
-        "messages":     [],
-    }
-
-    try:
-        # Stream events from LangGraph so we can update progress in real-time
-        async for event in design_graph.astream_events(initial_state, version="v2"):
-            kind  = event.get("event", "")
-            name  = event.get("name", "")
-            data  = event.get("data", {})
-
-            if kind == "on_chain_start":
-                stage_map = {
-                    "analyze_requirements":  (DesignStatus.ANALYZING,  10),
-                    "generate_basic_design": (DesignStatus.DESIGNING,  30),
-                    "generate_2d_layout":    (DesignStatus.LAYOUT_2D,  55),
-                    "generate_3d_model":     (DesignStatus.MODEL_3D,   75),
-                    "compile_report":        (DesignStatus.REPORTING,  88),
-                }
-                if name in stage_map:
-                    status, prog = stage_map[name]
-                    _designs[design_id]["status"]        = status
-                    _designs[design_id]["current_stage"] = name
-                    _designs[design_id]["progress"]      = prog
-
-            elif kind == "on_chain_end" and name == "LangGraph":
-                # Final state available
-                output = data.get("output", {})
-                if output:
-                    _update_registry_from_state(design_id, output)
-
-    except Exception as exc:
-        logger.exception("Pipeline failed for design %s", design_id)
-        _designs[design_id]["status"]       = DesignStatus.ERROR
-        _designs[design_id]["current_stage"]= "error"
-        _designs[design_id]["error"]        = str(exc)
-        return
-
-    # Final update
-    if _designs[design_id]["status"] != DesignStatus.ERROR:
-        _designs[design_id]["status"]       = DesignStatus.COMPLETE
-        _designs[design_id]["current_stage"]= "complete"
-        _designs[design_id]["progress"]     = 100
-        _designs[design_id]["completed_at"] = datetime.utcnow().isoformat()
-
-
-def _update_registry_from_state(design_id: str, state: dict) -> None:
-    """Merge LangGraph final state into the registry."""
-    reg = _designs[design_id]
-    if state.get("basic_design"):
-        reg["basic_design"] = state["basic_design"]
-    if state.get("floor_plans"):
-        reg["floor_plans"] = state["floor_plans"]
-    if state.get("model_3d"):
-        reg["model_3d"] = state["model_3d"]
-    if state.get("report_url"):
-        reg["report_url"] = state["report_url"]
-    reg["progress"] = state.get("progress", reg.get("progress", 0))
-
-
-# ── Route: Start new design ───────────────────────────────────────────────────
-
-@router.post("/design", response_model=DesignInitResponse, status_code=202,
-             summary="Start a new house design",
-             tags=["Design"])
-async def create_design(
-    request: DesignRequest,
-    background_tasks: BackgroundTasks,
-) -> DesignInitResponse:
-    """
-    Submit house requirements and receive a design_id.
-    The pipeline runs asynchronously; poll GET /design/{id} for results.
-    """
-    design_id = str(uuid.uuid4())
-
-    _designs[design_id] = {
-        "design_id":     design_id,
-        "status":        DesignStatus.PENDING,
-        "current_stage": "pending",
-        "progress":      0,
-        "requirements":  request.requirements.model_dump(),
-        "basic_design":  None,
-        "floor_plans":   [],
-        "model_3d":      None,
-        "report_url":    None,
-        "error":         None,
-        "created_at":    datetime.utcnow().isoformat(),
-        "completed_at":  None,
-    }
-
-    background_tasks.add_task(
-        _run_design_pipeline, design_id, request.requirements.model_dump()
-    )
-
-    return DesignInitResponse(
-        design_id     = design_id,
-        message       = "Design pipeline started. Poll status_url for progress.",
-        status_url    = f"/api/design/{design_id}",
-        websocket_url = f"/api/design/{design_id}/stream",
-    )
-
-
-# ── Route: Get design status / result ─────────────────────────────────────────
-
-@router.get("/design/{design_id}", response_model=DesignResult,
-            summary="Get design status and results",
-            tags=["Design"])
-async def get_design(design_id: str) -> DesignResult:
-    """Poll this endpoint to track progress and retrieve results."""
-    if design_id not in _designs:
-        raise HTTPException(status_code=404, detail="Design not found")
-    data = _designs[design_id]
-    # Map internal field names to schema field names
-    return DesignResult(
-        design_id    = data["design_id"],
-        status       = data.get("status", DesignStatus.PENDING),
-        stage        = data.get("current_stage", ""),
-        progress     = data.get("progress", 0),
-        requirements = data.get("requirements"),
-        basic_design = data.get("basic_design"),
-        floor_plans  = data.get("floor_plans") or [],
-        model_3d     = data.get("model_3d"),
-        report_url   = data.get("report_url"),
-        error        = data.get("error"),
-        created_at   = data.get("created_at", ""),
-        completed_at = data.get("completed_at"),
-    )
-
-
-# ── Route: SSE Progress Stream ────────────────────────────────────────────────
-
-@router.get("/design/{design_id}/stream",
-            summary="Server-Sent Events progress stream",
-            tags=["Design"])
-async def stream_design_progress(design_id: str) -> StreamingResponse:
-    """
-    Opens an SSE stream that emits design progress events until completion.
-    """
-    if design_id not in _designs:
-        raise HTTPException(status_code=404, detail="Design not found")
-
-    async def _event_generator():
-        last_progress = -1
-        while True:
-            design = _designs.get(design_id)
-            if not design:
-                break
-
-            progress = design.get("progress", 0)
-            status   = design.get("status", "pending")
-            stage    = design.get("current_stage", "")
-
-            if progress != last_progress:
-                payload = json.dumps({
-                    "design_id": design_id,
-                    "status":    status,
-                    "stage":     stage,
-                    "progress":  progress,
-                })
-                yield f"data: {payload}\n\n"
-                last_progress = progress
-
-            if status in (DesignStatus.COMPLETE, DesignStatus.ERROR):
-                # Send final snapshot
-                final = json.dumps({"event": "complete", **design}, default=str)
-                yield f"data: {final}\n\n"
-                break
-
-            await asyncio.sleep(1.0)
-
-    return StreamingResponse(
-        _event_generator(),
-        media_type="text/event-stream",
-        headers={
-            "Cache-Control":               "no-cache",
-            "X-Accel-Buffering":           "no",
-            "Access-Control-Allow-Origin": "*",
-        },
-    )
-
-
-# ── Route: List all designs ───────────────────────────────────────────────────
-
-@router.get("/designs",
-            summary="List all designs",
-            tags=["Design"])
-async def list_designs() -> list:
-    return [
-        {
-            "design_id":     d["design_id"],
-            "status":        d["status"],
-            "progress":      d["progress"],
-            "style":         d.get("requirements", {}).get("style", ""),
-            "area":          d.get("requirements", {}).get("total_area_sqft", 0),
-            "created_at":    d.get("created_at"),
-            "completed_at":  d.get("completed_at"),
-        }
-        for d in _designs.values()
-    ]
-
-
-# ── Route: Delete design ──────────────────────────────────────────────────────
-
-@router.delete("/design/{design_id}",
-               summary="Delete a design and its output files",
-               tags=["Design"])
-async def delete_design(design_id: str) -> dict:
-    if design_id not in _designs:
-        raise HTTPException(status_code=404, detail="Design not found")
-    _designs.pop(design_id)
-
-    import shutil
-    design_dir = OUTPUT_DIR / design_id
-    if design_dir.exists():
-        shutil.rmtree(design_dir)
-
-    return {"message": f"Design {design_id} deleted."}
-
-
-# ── Route: Serve output files ─────────────────────────────────────────────────
-
-@router.get("/files/{design_id}/{filename}",
-            summary="Download a generated file",
-            tags=["Files"])
-async def get_file(design_id: str, filename: str) -> FileResponse:
-    """Serve generated floor plans, 3D model HTML, report, etc."""
-    # Security: prevent path traversal
-    if ".." in filename or "/" in filename or "\\" in filename:
-        raise HTTPException(status_code=400, detail="Invalid filename")
-
-    file_path = OUTPUT_DIR / design_id / filename
-    if not file_path.exists():
-        raise HTTPException(status_code=404, detail="File not found")
-
-    # Determine media type
-    suffix = file_path.suffix.lower()
-    media_map = {
-        ".png":  "image/png",
-        ".svg":  "image/svg+xml",
-        ".html": "text/html",
-        ".json": "application/json",
-        ".pdf":  "application/pdf",
-    }
-    media_type = media_map.get(suffix, "application/octet-stream")
-    return FileResponse(str(file_path), media_type=media_type)
-
-
-# ── Route: Health check ───────────────────────────────────────────────────────
+# ── Health ─────────────────────────────────────────────────────────────────────
 
 @router.get("/health", tags=["System"])
 async def health() -> dict:
-    from config import LLM_PROVIDER, LLM_MODEL, GROQ_API_KEY
+    """Basic health check — confirms backend is alive."""
+    from pathlib import Path
+    base = Path(__file__).parent.parent
+    layout_ready  = (base / "models" / "layout_model" / "pytorch_layout_model.pt").exists()
+    quality_ready = (base / "models" / "quality_model" / "quality_regressor.pkl").exists()
     return {
-        "status":       "healthy",
-        "llm_provider": LLM_PROVIDER,
-        "llm_model":    LLM_MODEL,
-        "llm_ready":    bool(GROQ_API_KEY) or LLM_PROVIDER == "ollama",
-        "designs_in_memory": len(_designs),
+        "status":        "healthy",
+        "layout_model":  "loaded" if layout_ready  else "fallback (procedural)",
+        "quality_model": "loaded" if quality_ready else "fallback (heuristic)",
+        "engine":        "Local PyTorch + Scikit-Learn + Shapely",
     }
+
+
+# ── Core Design Pipeline ───────────────────────────────────────────────────────
+
+@router.post("/v2/analyze-requirements", tags=["Design"])
+async def analyze_requirements(raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Parses and normalizes raw user architectural requirements into a structured spec.
+    Returns room counts, validated plot dimensions, style preferences, and inferred constraints.
+    """
+    try:
+        spec = requirement_analyzer.analyze(raw_input)
+        return {"status": "success", "specification": spec.model_dump()}
+    except Exception as exc:
+        logger.exception("Requirement analysis failed")
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@router.post("/v2/generate-designs", tags=["Design"])
+async def generate_designs(raw_input: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Full AI pipeline:
+    1. Analyze and normalize requirements
+    2. Generate 15 candidate floor plan layouts (PyTorch-guided)
+    3. Validate each candidate with Shapely geometry constraints
+    4. Score each with Scikit-Learn quality predictor
+    5. Pareto-optimize for space efficiency, flow, light, and privacy
+    6. Return top-3 designs with cost estimates and cultural alignment scores
+    """
+    try:
+        spec = requirement_analyzer.analyze(raw_input)
+        req_dict = spec.model_dump()
+        priority = raw_input.get("priority", "balanced")
+
+        top_designs = layout_optimizer.generate_and_optimize(
+            req_dict, num_candidates=15, priority=priority
+        )
+
+        for design in top_designs:
+            design["cost_estimate"]        = cost_engine.estimate_cost(req_dict, design["rooms"])
+            design["cultural_evaluation"]  = cultural_engine.evaluate(design["rooms"], spec.cultural_preference)
+
+        return {
+            "status":       "success",
+            "requirements": req_dict,
+            "designs":      top_designs,
+        }
+    except Exception as exc:
+        logger.exception("Design generation failed")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/v2/whatif-redesign", tags=["Design"])
+async def whatif_redesign(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Applies a structured What-If redesign command (e.g., 'Make master bedroom larger',
+    'Add another bathroom on floor 2') and re-runs Pareto optimization on updated layout.
+    """
+    try:
+        reqs    = payload.get("current_requirements", {})
+        rooms   = payload.get("current_rooms", [])
+        command = payload.get("action_command", "Make master bedroom larger")
+        result  = whatif_engine.apply_redesign(reqs, rooms, command)
+        return {"status": "success", "result": result}
+    except Exception as exc:
+        logger.exception("What-If redesign failed")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ── Supporting Endpoints ───────────────────────────────────────────────────────
+
+@router.post("/v2/cost-estimate", tags=["Analysis"])
+async def get_cost_estimate(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Returns local construction cost estimate with per-category breakdown.
+    Based on sq-footage, budget tier, architectural style, and regional rates.
+    """
+    try:
+        reqs     = payload.get("requirements", {})
+        rooms    = payload.get("rooms", [])
+        estimate = cost_engine.estimate_cost(reqs, rooms)
+        return {"status": "success", "cost_estimate": estimate}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/v2/cultural-evaluation", tags=["Analysis"])
+async def get_cultural_evaluation(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Evaluates cultural/traditional design alignment (Vastu Shastra, Feng Shui, etc.)
+    Returns per-room compliance scores and overall cultural alignment percentage.
+    """
+    try:
+        rooms      = payload.get("rooms", [])
+        preference = payload.get("cultural_preference", "vastu")
+        result     = cultural_engine.evaluate(rooms, preference)
+        return {"status": "success", "cultural_evaluation": result}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ── Adaptive Learning ──────────────────────────────────────────────────────────
+
+@router.post("/v2/feedback", tags=["Adaptive Learning"])
+async def submit_feedback(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Logs user design selection feedback into the adaptive training dataset.
+    This data is used to fine-tune the local ML models on the next retrain cycle.
+    """
+    try:
+        result = adaptive_pipeline.log_feedback(
+            requirements    = payload.get("requirements", {}),
+            selected_design = payload.get("selected_design", {}),
+            rejected_designs= payload.get("rejected_designs", []),
+            user_rating     = payload.get("user_rating", 5),
+            comments        = payload.get("comments", ""),
+        )
+        return {"status": "success", "result": result}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.post("/v2/trigger-retrain", tags=["Adaptive Learning"])
+async def trigger_retrain() -> Dict[str, Any]:
+    """
+    Triggers a background retraining cycle using accumulated feedback data.
+    Retrains PyTorch layout model and Scikit-Learn quality predictor.
+    """
+    try:
+        result = adaptive_pipeline.trigger_retrain()
+        return {"status": "success", "retrain_result": result}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.get("/v2/analytics", tags=["Analytics"])
+async def get_analytics() -> Dict[str, Any]:
+    """Returns application usage telemetry, space efficiency trends, and model version history."""
+    try:
+        data = adaptive_pipeline.get_analytics()
+        return {"status": "success", "analytics": data}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@router.get("/v2/evaluation-metrics", tags=["Analytics"])
+async def get_evaluation_metrics() -> Dict[str, Any]:
+    """
+    Runs empirical benchmark comparing three approaches:
+    - Baseline (random layout)
+    - ML-guided (PyTorch layout model)
+    - Optimized (ML + Pareto + Shapely constraints)
+    Returns mean quality scores, constraint satisfaction rates, and improvement deltas.
+    """
+    try:
+        bench = run_benchmark_evaluation(num_trials=12)
+        return {"status": "success", "evaluation": bench}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))

@@ -169,3 +169,49 @@ class DesignInitResponse(BaseModel):
     message: str
     status_url: str
     websocket_url: str
+
+
+# ─── AI House Architect Production Schemas ─────────────────────────────────────
+
+class PlotInput(BaseModel):
+    length: float = Field(..., gt=0, description="Plot length in feet")
+    width: float = Field(..., gt=0, description="Plot width in feet")
+
+
+class RoomCountInput(BaseModel):
+    bedrooms: int = Field(3, ge=1, le=10)
+    bathrooms: int = Field(2, ge=1, le=10)
+    kitchen: int = Field(1, ge=1, le=3)
+    living_dining: int = Field(1, ge=1, le=3)
+    parking: int = Field(1, ge=0, le=5)
+    balcony: int = Field(1, ge=0, le=5)
+    garden: bool = Field(True)
+    home_office: bool = Field(False)
+    pooja_prayer_room: bool = Field(False)
+
+
+class HouseDesignRequirement(BaseModel):
+    plot: PlotInput
+    floors: int = Field(1, ge=1, le=4)
+    rooms: RoomCountInput
+    budget: str = Field("standard")
+    architectural_style: str = Field("modern")
+    climate_location: str = Field("tropical")
+    cultural_preference: str = Field("none")
+    accessibility: bool = Field(False)
+    future_expansion: bool = Field(False)
+
+
+class WhatIfRequest(BaseModel):
+    current_requirements: Dict[str, Any]
+    current_rooms: List[Dict[str, Any]]
+    action_command: str
+
+
+class FeedbackSubmission(BaseModel):
+    requirements: Dict[str, Any]
+    selected_design: Dict[str, Any]
+    rejected_designs: List[Dict[str, Any]] = Field(default_factory=list)
+    user_rating: int = Field(5, ge=1, le=5)
+    comments: str = Field("")
+
