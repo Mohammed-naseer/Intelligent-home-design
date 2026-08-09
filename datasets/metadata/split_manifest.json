@@ -1,0 +1,57 @@
+{
+  "seed": 42,
+  "ratios": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "total": 400,
+  "train": {
+    "count": 279,
+    "floors_distribution": {
+      "1": 93,
+      "2": 94,
+      "3": 92
+    },
+    "bedrooms_distribution": {
+      "2": 71,
+      "3": 74,
+      "4": 67,
+      "5": 67
+    }
+  },
+  "validation": {
+    "count": 59,
+    "floors_distribution": {
+      "1": 20,
+      "2": 20,
+      "3": 19
+    },
+    "bedrooms_distribution": {
+      "2": 15,
+      "3": 12,
+      "4": 18,
+      "5": 14
+    }
+  },
+  "test": {
+    "count": 62,
+    "floors_distribution": {
+      "1": 21,
+      "2": 20,
+      "3": 21
+    },
+    "bedrooms_distribution": {
+      "2": 16,
+      "3": 17,
+      "4": 14,
+      "5": 15
+    }
+  },
+  "paths": {
+    "train": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\datasets\\train\\train.json",
+    "validation": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\datasets\\validation\\validation.json",
+    "test": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\datasets\\test\\test.json"
+  },
+  "elapsed_seconds": 0.39
+}

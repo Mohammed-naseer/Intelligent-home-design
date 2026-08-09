@@ -44,11 +44,20 @@ class LayoutGenerator:
                 x_tensor = encode_requirements(requirements)
                 torch.manual_seed(candidate_seed + 42)
                 with torch.no_grad():
-                    preds = self.model(x_tensor).squeeze(0)  # (MAX_ROOMS, 6)
+                    out = self.model(x_tensor)
+                    if isinstance(out, tuple):
+                        spatial_preds, type_logits = out
+                        spatial_preds = spatial_preds.squeeze(0)  # (MAX_ROOMS, 6)
+                        type_indices = type_logits.squeeze(0).argmax(dim=-1).numpy()  # (MAX_ROOMS,)
+                    else:
+                        spatial_preds = out.squeeze(0)
+                        type_indices = np.zeros(MAX_ROOMS, dtype=int)
+
+                from datasets.room_vocabulary import decode_room_type, get_room_color
 
                 raw_rooms = []
                 for idx in range(MAX_ROOMS):
-                    row = preds[idx].numpy()
+                    row = spatial_preds[idx].numpy()
                     norm_x, norm_y, norm_w, norm_h, norm_fl, active = row
                     if active > 0.4:
                         x = round(float(norm_x * (plot_w - 10.0)), 1)
@@ -57,13 +66,21 @@ class LayoutGenerator:
                         h = max(6.0, round(float(norm_h * (plot_l * 0.4)), 1))
                         fl = max(1, min(floors, int(round(norm_fl * floors + 0.5))))
 
+                        room_type = decode_room_type(int(type_indices[idx])) if type_indices is not None else "room"
+                        room_name = room_type.replace("_", " ").title()
+
                         raw_rooms.append({
                             "id": f"room_{idx+1}",
+                            "type": room_type,
+                            "name": room_name,
                             "x": x,
                             "y": y,
                             "width": w,
                             "height": h,
                             "floor": fl,
+                            "color": get_room_color(room_type),
+                            "doors": [{"wall": "south", "connects_to": "corridor"}],
+                            "windows": [{"wall": "north", "width": 4.0}],
                         })
 
                 if raw_rooms:

@@ -1,0 +1,50 @@
+{
+  "Baseline (Rule-Based)": {
+    "trials": 20,
+    "valid_trials": 4,
+    "validity_rate": "20.0%",
+    "boundary_violation_rate": "0.0%",
+    "overlap_rate": "40.0%",
+    "invalid_dim_rate": "0.0%",
+    "space_utilization": "41.3%",
+    "room_count_accuracy": "70.2%",
+    "requirement_satisfaction": "60.0%",
+    "floor_accuracy": "100.0%",
+    "constraint_score_mean": 0.76,
+    "latency_mean_ms": 0.25,
+    "latency_min_ms": 0.1,
+    "latency_max_ms": 2.41
+  },
+  "ML Model (PyTorch)": {
+    "trials": 20,
+    "valid_trials": 0,
+    "validity_rate": "0.0%",
+    "boundary_violation_rate": "0.0%",
+    "overlap_rate": "121.5%",
+    "invalid_dim_rate": "131.2%",
+    "space_utilization": "13.7%",
+    "room_count_accuracy": "64.5%",
+    "requirement_satisfaction": "90.0%",
+    "floor_accuracy": "100.0%",
+    "constraint_score_mean": 0.35,
+    "latency_mean_ms": 202.03,
+    "latency_min_ms": 10.85,
+    "latency_max_ms": 3766.63
+  },
+  "Optimized (ML+Shapely)": {
+    "trials": 20,
+    "valid_trials": 0,
+    "validity_rate": "0.0%",
+    "boundary_violation_rate": "0.0%",
+    "overlap_rate": "130.6%",
+    "invalid_dim_rate": "131.2%",
+    "space_utilization": "13.7%",
+    "room_count_accuracy": "64.5%",
+    "requirement_satisfaction": "90.0%",
+    "floor_accuracy": "100.0%",
+    "constraint_score_mean": 0.35,
+    "latency_mean_ms": 247.07,
+    "latency_min_ms": 57.38,
+    "latency_max_ms": 3601.3
+  }
+}

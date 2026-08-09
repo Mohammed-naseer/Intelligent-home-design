@@ -1,0 +1,53 @@
+{
+  "sources": [],
+  "total_input": 400,
+  "total_canonical": 400,
+  "preprocessing": {
+    "total_input": 400,
+    "passed_schema_validation": 400,
+    "passed_geometry_validation": 400,
+    "canonicalized": 400,
+    "rejected_schema": 0,
+    "rejected_geometry": 0,
+    "rejected_canonicalize": 0
+  },
+  "elapsed_seconds": 0.41,
+  "output_path": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\datasets\\processed\\canonical_dataset.json",
+  "format_version": "1.0",
+  "room_vocabulary": [
+    "living_room",
+    "bedroom",
+    "master_bedroom",
+    "bathroom",
+    "kitchen",
+    "dining_room",
+    "corridor",
+    "entrance",
+    "staircase",
+    "balcony",
+    "parking",
+    "storage",
+    "study",
+    "utility",
+    "garden"
+  ],
+  "num_room_types": 15,
+  "max_rooms_per_sample": 20,
+  "room_type_distribution": {
+    "living_room": 400,
+    "bedroom": 989,
+    "master_bedroom": 400,
+    "bathroom": 1207,
+    "kitchen": 400,
+    "dining_room": 400,
+    "corridor": 0,
+    "entrance": 0,
+    "staircase": 266,
+    "balcony": 0,
+    "parking": 400,
+    "storage": 0,
+    "study": 0,
+    "utility": 0,
+    "garden": 0
+  }
+}

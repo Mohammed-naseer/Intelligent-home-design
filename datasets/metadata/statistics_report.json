@@ -1,0 +1,929 @@
+{
+  "overall": {
+    "count": 400,
+    "total_rooms": 4462,
+    "rooms_per_house": {
+      "mean": 11.15,
+      "min": 8,
+      "max": 14
+    },
+    "floors": {
+      "mean": 2.0,
+      "dist": {
+        "1": 134,
+        "2": 134,
+        "3": 132
+      }
+    },
+    "plot_dimensions": {
+      "width_mean": 60.99,
+      "width_min": 30.0,
+      "width_max": 100.0,
+      "length_mean": 70.55,
+      "length_min": 40.0,
+      "length_max": 100.0,
+      "area_mean": 4328.25
+    },
+    "room_type_distribution": {
+      "living_room": {
+        "count": 400,
+        "pct": 9.0,
+        "avg_width": 19.03,
+        "avg_height": 15.94,
+        "avg_area": 303.64,
+        "min_width": 14.1,
+        "max_width": 24.0
+      },
+      "bedroom": {
+        "count": 989,
+        "pct": 22.2,
+        "avg_width": 11.98,
+        "avg_height": 12.0,
+        "avg_area": 143.69,
+        "min_width": 10.0,
+        "max_width": 14.0
+      },
+      "master_bedroom": {
+        "count": 400,
+        "pct": 9.0,
+        "avg_width": 14.92,
+        "avg_height": 13.94,
+        "avg_area": 207.77,
+        "min_width": 12.0,
+        "max_width": 18.0
+      },
+      "bathroom": {
+        "count": 1207,
+        "pct": 27.1,
+        "avg_width": 8.68,
+        "avg_height": 8.17,
+        "avg_area": 77.38,
+        "min_width": 5.0,
+        "max_width": 14.0
+      },
+      "kitchen": {
+        "count": 400,
+        "pct": 9.0,
+        "avg_width": 11.59,
+        "avg_height": 9.93,
+        "avg_area": 114.98,
+        "min_width": 9.0,
+        "max_width": 14.0
+      },
+      "dining_room": {
+        "count": 400,
+        "pct": 9.0,
+        "avg_width": 12.98,
+        "avg_height": 12.05,
+        "avg_area": 156.32,
+        "min_width": 10.0,
+        "max_width": 16.0
+      },
+      "corridor": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "entrance": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "staircase": {
+        "count": 266,
+        "pct": 6.0,
+        "avg_width": 9.55,
+        "avg_height": 8.08,
+        "avg_area": 77.09,
+        "min_width": 7.0,
+        "max_width": 12.0
+      },
+      "balcony": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "parking": {
+        "count": 400,
+        "pct": 9.0,
+        "avg_width": 15.88,
+        "avg_height": 18.83,
+        "avg_area": 298.93,
+        "min_width": 12.0,
+        "max_width": 20.0
+      },
+      "storage": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "study": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "utility": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      },
+      "garden": {
+        "count": 0,
+        "pct": 0.0,
+        "avg_width": null,
+        "avg_height": null,
+        "avg_area": null,
+        "min_width": null,
+        "max_width": null
+      }
+    },
+    "top_adjacency_pairs": [
+      {
+        "pair": "bathroom -- bedroom",
+        "count": 399
+      },
+      {
+        "pair": "kitchen -- living_room",
+        "count": 349
+      },
+      {
+        "pair": "bedroom -- bedroom",
+        "count": 322
+      },
+      {
+        "pair": "bathroom -- parking",
+        "count": 311
+      },
+      {
+        "pair": "dining_room -- kitchen",
+        "count": 278
+      },
+      {
+        "pair": "bathroom -- dining_room",
+        "count": 226
+      },
+      {
+        "pair": "bathroom -- bathroom",
+        "count": 210
+      },
+      {
+        "pair": "bedroom -- parking",
+        "count": 192
+      },
+      {
+        "pair": "bedroom -- master_bedroom",
+        "count": 184
+      },
+      {
+        "pair": "bathroom -- master_bedroom",
+        "count": 177
+      },
+      {
+        "pair": "bathroom -- staircase",
+        "count": 129
+      },
+      {
+        "pair": "dining_room -- master_bedroom",
+        "count": 79
+      },
+      {
+        "pair": "bedroom -- staircase",
+        "count": 53
+      },
+      {
+        "pair": "parking -- staircase",
+        "count": 30
+      },
+      {
+        "pair": "bedroom -- dining_room",
+        "count": 21
+      }
+    ],
+    "quality_metrics": {
+      "overall_score_mean": 81.28,
+      "overall_score_min": 72.8,
+      "overall_score_max": 94.0,
+      "space_util_mean": 49.68
+    }
+  },
+  "splits": {
+    "train": {
+      "count": 279,
+      "total_rooms": 3123,
+      "rooms_per_house": {
+        "mean": 11.19,
+        "min": 8,
+        "max": 14
+      },
+      "floors": {
+        "mean": 2.0,
+        "dist": {
+          "1": 93,
+          "2": 94,
+          "3": 92
+        }
+      },
+      "plot_dimensions": {
+        "width_mean": 60.84,
+        "width_min": 30.0,
+        "width_max": 100.0,
+        "length_mean": 71.0,
+        "length_min": 40.0,
+        "length_max": 100.0,
+        "area_mean": 4349.1
+      },
+      "room_type_distribution": {
+        "living_room": {
+          "count": 279,
+          "pct": 8.9,
+          "avg_width": 18.91,
+          "avg_height": 15.95,
+          "avg_area": 302.06,
+          "min_width": 14.1,
+          "max_width": 24.0
+        },
+        "bedroom": {
+          "count": 688,
+          "pct": 22.0,
+          "avg_width": 11.9,
+          "avg_height": 11.98,
+          "avg_area": 142.45,
+          "min_width": 10.0,
+          "max_width": 14.0
+        },
+        "master_bedroom": {
+          "count": 279,
+          "pct": 8.9,
+          "avg_width": 14.85,
+          "avg_height": 13.89,
+          "avg_area": 206.12,
+          "min_width": 12.0,
+          "max_width": 18.0
+        },
+        "bathroom": {
+          "count": 854,
+          "pct": 27.3,
+          "avg_width": 8.72,
+          "avg_height": 8.26,
+          "avg_area": 78.65,
+          "min_width": 5.0,
+          "max_width": 14.0
+        },
+        "kitchen": {
+          "count": 279,
+          "pct": 8.9,
+          "avg_width": 11.61,
+          "avg_height": 9.97,
+          "avg_area": 115.65,
+          "min_width": 9.0,
+          "max_width": 14.0
+        },
+        "dining_room": {
+          "count": 279,
+          "pct": 8.9,
+          "avg_width": 13.03,
+          "avg_height": 12.01,
+          "avg_area": 156.48,
+          "min_width": 10.0,
+          "max_width": 16.0
+        },
+        "corridor": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "entrance": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "staircase": {
+          "count": 186,
+          "pct": 6.0,
+          "avg_width": 9.53,
+          "avg_height": 8.07,
+          "avg_area": 76.93,
+          "min_width": 7.0,
+          "max_width": 12.0
+        },
+        "balcony": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "parking": {
+          "count": 279,
+          "pct": 8.9,
+          "avg_width": 15.9,
+          "avg_height": 18.86,
+          "avg_area": 299.21,
+          "min_width": 12.0,
+          "max_width": 20.0
+        },
+        "storage": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "study": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "utility": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "garden": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        }
+      },
+      "top_adjacency_pairs": [
+        {
+          "pair": "bathroom -- bedroom",
+          "count": 279
+        },
+        {
+          "pair": "kitchen -- living_room",
+          "count": 245
+        },
+        {
+          "pair": "bedroom -- bedroom",
+          "count": 223
+        },
+        {
+          "pair": "bathroom -- parking",
+          "count": 217
+        },
+        {
+          "pair": "dining_room -- kitchen",
+          "count": 190
+        },
+        {
+          "pair": "bathroom -- dining_room",
+          "count": 157
+        },
+        {
+          "pair": "bathroom -- bathroom",
+          "count": 150
+        },
+        {
+          "pair": "bedroom -- master_bedroom",
+          "count": 128
+        },
+        {
+          "pair": "bathroom -- master_bedroom",
+          "count": 127
+        },
+        {
+          "pair": "bedroom -- parking",
+          "count": 125
+        },
+        {
+          "pair": "bathroom -- staircase",
+          "count": 88
+        },
+        {
+          "pair": "dining_room -- master_bedroom",
+          "count": 56
+        },
+        {
+          "pair": "bedroom -- staircase",
+          "count": 33
+        },
+        {
+          "pair": "parking -- staircase",
+          "count": 18
+        },
+        {
+          "pair": "bedroom -- dining_room",
+          "count": 10
+        }
+      ],
+      "quality_metrics": {
+        "overall_score_mean": 81.21,
+        "overall_score_min": 72.8,
+        "overall_score_max": 94.0,
+        "space_util_mean": 49.3
+      }
+    },
+    "validation": {
+      "count": 59,
+      "total_rooms": 649,
+      "rooms_per_house": {
+        "mean": 11.0,
+        "min": 8,
+        "max": 14
+      },
+      "floors": {
+        "mean": 1.98,
+        "dist": {
+          "1": 20,
+          "2": 20,
+          "3": 19
+        }
+      },
+      "plot_dimensions": {
+        "width_mean": 60.76,
+        "width_min": 30.0,
+        "width_max": 100.0,
+        "length_mean": 69.83,
+        "length_min": 40.0,
+        "length_max": 100.0,
+        "area_mean": 4311.86
+      },
+      "room_type_distribution": {
+        "living_room": {
+          "count": 59,
+          "pct": 9.1,
+          "avg_width": 19.53,
+          "avg_height": 16.22,
+          "avg_area": 316.49,
+          "min_width": 14.2,
+          "max_width": 23.9
+        },
+        "bedroom": {
+          "count": 149,
+          "pct": 23.0,
+          "avg_width": 12.16,
+          "avg_height": 12.05,
+          "avg_area": 146.4,
+          "min_width": 10.0,
+          "max_width": 14.0
+        },
+        "master_bedroom": {
+          "count": 59,
+          "pct": 9.1,
+          "avg_width": 15.19,
+          "avg_height": 13.8,
+          "avg_area": 209.52,
+          "min_width": 12.1,
+          "max_width": 17.9
+        },
+        "bathroom": {
+          "count": 166,
+          "pct": 25.6,
+          "avg_width": 8.47,
+          "avg_height": 7.82,
+          "avg_area": 72.2,
+          "min_width": 5.0,
+          "max_width": 14.0
+        },
+        "kitchen": {
+          "count": 59,
+          "pct": 9.1,
+          "avg_width": 11.43,
+          "avg_height": 9.91,
+          "avg_area": 113.28,
+          "min_width": 9.0,
+          "max_width": 13.9
+        },
+        "dining_room": {
+          "count": 59,
+          "pct": 9.1,
+          "avg_width": 12.89,
+          "avg_height": 11.88,
+          "avg_area": 152.91,
+          "min_width": 10.0,
+          "max_width": 16.0
+        },
+        "corridor": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "entrance": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "staircase": {
+          "count": 39,
+          "pct": 6.0,
+          "avg_width": 9.65,
+          "avg_height": 8.03,
+          "avg_area": 76.98,
+          "min_width": 7.1,
+          "max_width": 11.7
+        },
+        "balcony": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "parking": {
+          "count": 59,
+          "pct": 9.1,
+          "avg_width": 15.81,
+          "avg_height": 18.64,
+          "avg_area": 295.35,
+          "min_width": 12.1,
+          "max_width": 20.0
+        },
+        "storage": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "study": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "utility": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "garden": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        }
+      },
+      "top_adjacency_pairs": [
+        {
+          "pair": "bathroom -- bedroom",
+          "count": 54
+        },
+        {
+          "pair": "kitchen -- living_room",
+          "count": 50
+        },
+        {
+          "pair": "bedroom -- bedroom",
+          "count": 46
+        },
+        {
+          "pair": "bathroom -- parking",
+          "count": 45
+        },
+        {
+          "pair": "dining_room -- kitchen",
+          "count": 42
+        },
+        {
+          "pair": "bedroom -- parking",
+          "count": 35
+        },
+        {
+          "pair": "bathroom -- dining_room",
+          "count": 33
+        },
+        {
+          "pair": "bedroom -- master_bedroom",
+          "count": 26
+        },
+        {
+          "pair": "bathroom -- master_bedroom",
+          "count": 25
+        },
+        {
+          "pair": "bathroom -- bathroom",
+          "count": 23
+        },
+        {
+          "pair": "bathroom -- staircase",
+          "count": 19
+        },
+        {
+          "pair": "bedroom -- staircase",
+          "count": 11
+        },
+        {
+          "pair": "dining_room -- master_bedroom",
+          "count": 10
+        },
+        {
+          "pair": "parking -- staircase",
+          "count": 6
+        },
+        {
+          "pair": "bedroom -- dining_room",
+          "count": 5
+        }
+      ],
+      "quality_metrics": {
+        "overall_score_mean": 81.53,
+        "overall_score_min": 75.1,
+        "overall_score_max": 92.2,
+        "space_util_mean": 50.32
+      }
+    },
+    "test": {
+      "count": 62,
+      "total_rooms": 690,
+      "rooms_per_house": {
+        "mean": 11.13,
+        "min": 8,
+        "max": 14
+      },
+      "floors": {
+        "mean": 2.0,
+        "dist": {
+          "1": 21,
+          "2": 20,
+          "3": 21
+        }
+      },
+      "plot_dimensions": {
+        "width_mean": 61.85,
+        "width_min": 30.0,
+        "width_max": 100.0,
+        "length_mean": 69.19,
+        "length_min": 40.0,
+        "length_max": 100.0,
+        "area_mean": 4250.0
+      },
+      "room_type_distribution": {
+        "living_room": {
+          "count": 62,
+          "pct": 9.0,
+          "avg_width": 19.07,
+          "avg_height": 15.64,
+          "avg_area": 298.51,
+          "min_width": 14.2,
+          "max_width": 23.9
+        },
+        "bedroom": {
+          "count": 152,
+          "pct": 22.0,
+          "avg_width": 12.15,
+          "avg_height": 12.07,
+          "avg_area": 146.63,
+          "min_width": 10.0,
+          "max_width": 14.0
+        },
+        "master_bedroom": {
+          "count": 62,
+          "pct": 9.0,
+          "avg_width": 14.93,
+          "avg_height": 14.28,
+          "avg_area": 213.52,
+          "min_width": 12.1,
+          "max_width": 18.0
+        },
+        "bathroom": {
+          "count": 187,
+          "pct": 27.1,
+          "avg_width": 8.67,
+          "avg_height": 8.06,
+          "avg_area": 76.22,
+          "min_width": 5.0,
+          "max_width": 14.0
+        },
+        "kitchen": {
+          "count": 62,
+          "pct": 9.0,
+          "avg_width": 11.64,
+          "avg_height": 9.78,
+          "avg_area": 113.59,
+          "min_width": 9.1,
+          "max_width": 13.9
+        },
+        "dining_room": {
+          "count": 62,
+          "pct": 9.0,
+          "avg_width": 12.84,
+          "avg_height": 12.38,
+          "avg_area": 158.84,
+          "min_width": 10.1,
+          "max_width": 15.9
+        },
+        "corridor": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "entrance": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "staircase": {
+          "count": 41,
+          "pct": 5.9,
+          "avg_width": 9.56,
+          "avg_height": 8.16,
+          "avg_area": 77.9,
+          "min_width": 7.0,
+          "max_width": 12.0
+        },
+        "balcony": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "parking": {
+          "count": 62,
+          "pct": 9.0,
+          "avg_width": 15.89,
+          "avg_height": 18.91,
+          "avg_area": 301.07,
+          "min_width": 12.1,
+          "max_width": 19.9
+        },
+        "storage": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "study": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "utility": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        },
+        "garden": {
+          "count": 0,
+          "pct": 0.0,
+          "avg_width": null,
+          "avg_height": null,
+          "avg_area": null,
+          "min_width": null,
+          "max_width": null
+        }
+      },
+      "top_adjacency_pairs": [
+        {
+          "pair": "bathroom -- bedroom",
+          "count": 66
+        },
+        {
+          "pair": "kitchen -- living_room",
+          "count": 54
+        },
+        {
+          "pair": "bedroom -- bedroom",
+          "count": 53
+        },
+        {
+          "pair": "bathroom -- parking",
+          "count": 49
+        },
+        {
+          "pair": "dining_room -- kitchen",
+          "count": 46
+        },
+        {
+          "pair": "bathroom -- bathroom",
+          "count": 37
+        },
+        {
+          "pair": "bathroom -- dining_room",
+          "count": 36
+        },
+        {
+          "pair": "bedroom -- parking",
+          "count": 32
+        },
+        {
+          "pair": "bedroom -- master_bedroom",
+          "count": 30
+        },
+        {
+          "pair": "bathroom -- master_bedroom",
+          "count": 25
+        },
+        {
+          "pair": "bathroom -- staircase",
+          "count": 22
+        },
+        {
+          "pair": "dining_room -- master_bedroom",
+          "count": 13
+        },
+        {
+          "pair": "bedroom -- staircase",
+          "count": 9
+        },
+        {
+          "pair": "bedroom -- dining_room",
+          "count": 6
+        },
+        {
+          "pair": "parking -- staircase",
+          "count": 6
+        }
+      ],
+      "quality_metrics": {
+        "overall_score_mean": 81.37,
+        "overall_score_min": 73.9,
+        "overall_score_max": 92.3,
+        "space_util_mean": 50.8
+      }
+    }
+  },
+  "source": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\datasets\\processed\\canonical_dataset.json"
+}

@@ -1,0 +1,337 @@
+{
+  "trained_at": "2026-08-09T18:11:53.171350Z",
+  "elapsed_seconds": 8.13,
+  "config": {
+    "epochs_max": 30,
+    "epochs_run": 30,
+    "batch_size": 32,
+    "lr_initial": 0.003,
+    "seed": 42,
+    "patience": 12,
+    "device": "cpu"
+  },
+  "architecture": {
+    "in_features": 9,
+    "max_rooms": 15,
+    "num_room_types": 15,
+    "spatial_features": 6,
+    "total_params": 343739
+  },
+  "dataset": {
+    "train_samples": 279,
+    "val_samples": 59
+  },
+  "final_metrics": {
+    "best_epoch": 28,
+    "best_val_loss": 0.110013,
+    "final_train_loss": 0.105871,
+    "final_val_loss": 0.1106
+  },
+  "checkpoints": {
+    "best": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\models\\layout_model\\best_model.pt",
+    "latest": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\models\\layout_model\\latest_model.pt",
+    "legacy": "C:\\Users\\nasee\\OneDrive\\Desktop\\Planner\\NeuroArchAI-Platform\\models\\layout_model\\pytorch_layout_model.pt"
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.396454,
+      "val_loss": 0.151126,
+      "train_spatial_loss": 0.077212,
+      "val_spatial_loss": 0.057723,
+      "train_type_loss": 1.064143,
+      "val_type_loss": 0.311343,
+      "lr": 0.003
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.153904,
+      "val_loss": 0.13637,
+      "train_spatial_loss": 0.054169,
+      "val_spatial_loss": 0.048392,
+      "train_type_loss": 0.332447,
+      "val_type_loss": 0.293262,
+      "lr": 0.003
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.136983,
+      "val_loss": 0.130873,
+      "train_spatial_loss": 0.047119,
+      "val_spatial_loss": 0.042889,
+      "train_type_loss": 0.299546,
+      "val_type_loss": 0.293277,
+      "lr": 0.003
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.126844,
+      "val_loss": 0.120464,
+      "train_spatial_loss": 0.041565,
+      "val_spatial_loss": 0.04021,
+      "train_type_loss": 0.284264,
+      "val_type_loss": 0.267513,
+      "lr": 0.003
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.122052,
+      "val_loss": 0.119046,
+      "train_spatial_loss": 0.039651,
+      "val_spatial_loss": 0.038796,
+      "train_type_loss": 0.274669,
+      "val_type_loss": 0.267501,
+      "lr": 0.003
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.120267,
+      "val_loss": 0.117332,
+      "train_spatial_loss": 0.039103,
+      "val_spatial_loss": 0.037989,
+      "train_type_loss": 0.270547,
+      "val_type_loss": 0.264476,
+      "lr": 0.003
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.118045,
+      "val_loss": 0.115294,
+      "train_spatial_loss": 0.038113,
+      "val_spatial_loss": 0.036441,
+      "train_type_loss": 0.266442,
+      "val_type_loss": 0.262845,
+      "lr": 0.003
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.116686,
+      "val_loss": 0.111939,
+      "train_spatial_loss": 0.036222,
+      "val_spatial_loss": 0.033698,
+      "train_type_loss": 0.268211,
+      "val_type_loss": 0.260805,
+      "lr": 0.003
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.113484,
+      "val_loss": 0.112039,
+      "train_spatial_loss": 0.034103,
+      "val_spatial_loss": 0.033056,
+      "train_type_loss": 0.264602,
+      "val_type_loss": 0.263277,
+      "lr": 0.003
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.112908,
+      "val_loss": 0.111928,
+      "train_spatial_loss": 0.033764,
+      "val_spatial_loss": 0.033755,
+      "train_type_loss": 0.263813,
+      "val_type_loss": 0.260577,
+      "lr": 0.003
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.111358,
+      "val_loss": 0.111217,
+      "train_spatial_loss": 0.03314,
+      "val_spatial_loss": 0.033347,
+      "train_type_loss": 0.260726,
+      "val_type_loss": 0.259568,
+      "lr": 0.003
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.110103,
+      "val_loss": 0.111251,
+      "train_spatial_loss": 0.032738,
+      "val_spatial_loss": 0.033032,
+      "train_type_loss": 0.257884,
+      "val_type_loss": 0.260729,
+      "lr": 0.003
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.112584,
+      "val_loss": 0.114296,
+      "train_spatial_loss": 0.032695,
+      "val_spatial_loss": 0.032857,
+      "train_type_loss": 0.266299,
+      "val_type_loss": 0.271463,
+      "lr": 0.003
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.10926,
+      "val_loss": 0.112071,
+      "train_spatial_loss": 0.032498,
+      "val_spatial_loss": 0.03337,
+      "train_type_loss": 0.255874,
+      "val_type_loss": 0.262336,
+      "lr": 0.003
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.108874,
+      "val_loss": 0.11255,
+      "train_spatial_loss": 0.03232,
+      "val_spatial_loss": 0.033753,
+      "train_type_loss": 0.255179,
+      "val_type_loss": 0.262656,
+      "lr": 0.003
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.108682,
+      "val_loss": 0.110332,
+      "train_spatial_loss": 0.032305,
+      "val_spatial_loss": 0.033362,
+      "train_type_loss": 0.254589,
+      "val_type_loss": 0.256567,
+      "lr": 0.003
+    },
+    {
+      "epoch": 17,
+      "train_loss": 0.108912,
+      "val_loss": 0.111641,
+      "train_spatial_loss": 0.032377,
+      "val_spatial_loss": 0.033482,
+      "train_type_loss": 0.255117,
+      "val_type_loss": 0.260531,
+      "lr": 0.003
+    },
+    {
+      "epoch": 18,
+      "train_loss": 0.107727,
+      "val_loss": 0.110553,
+      "train_spatial_loss": 0.032091,
+      "val_spatial_loss": 0.033281,
+      "train_type_loss": 0.252123,
+      "val_type_loss": 0.257573,
+      "lr": 0.003
+    },
+    {
+      "epoch": 19,
+      "train_loss": 0.108337,
+      "val_loss": 0.110853,
+      "train_spatial_loss": 0.03191,
+      "val_spatial_loss": 0.033297,
+      "train_type_loss": 0.254758,
+      "val_type_loss": 0.25852,
+      "lr": 0.003
+    },
+    {
+      "epoch": 20,
+      "train_loss": 0.107188,
+      "val_loss": 0.111206,
+      "train_spatial_loss": 0.032084,
+      "val_spatial_loss": 0.033299,
+      "train_type_loss": 0.250345,
+      "val_type_loss": 0.259689,
+      "lr": 0.003
+    },
+    {
+      "epoch": 21,
+      "train_loss": 0.108506,
+      "val_loss": 0.1108,
+      "train_spatial_loss": 0.03189,
+      "val_spatial_loss": 0.0337,
+      "train_type_loss": 0.255387,
+      "val_type_loss": 0.257001,
+      "lr": 0.003
+    },
+    {
+      "epoch": 22,
+      "train_loss": 0.106551,
+      "val_loss": 0.110962,
+      "train_spatial_loss": 0.031604,
+      "val_spatial_loss": 0.033238,
+      "train_type_loss": 0.249821,
+      "val_type_loss": 0.259081,
+      "lr": 0.003
+    },
+    {
+      "epoch": 23,
+      "train_loss": 0.107051,
+      "val_loss": 0.110134,
+      "train_spatial_loss": 0.031772,
+      "val_spatial_loss": 0.033109,
+      "train_type_loss": 0.25093,
+      "val_type_loss": 0.256748,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 24,
+      "train_loss": 0.105732,
+      "val_loss": 0.110369,
+      "train_spatial_loss": 0.031493,
+      "val_spatial_loss": 0.033284,
+      "train_type_loss": 0.247463,
+      "val_type_loss": 0.256947,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 25,
+      "train_loss": 0.107072,
+      "val_loss": 0.110151,
+      "train_spatial_loss": 0.031666,
+      "val_spatial_loss": 0.033314,
+      "train_type_loss": 0.251356,
+      "val_type_loss": 0.256123,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 26,
+      "train_loss": 0.106403,
+      "val_loss": 0.110603,
+      "train_spatial_loss": 0.031384,
+      "val_spatial_loss": 0.033707,
+      "train_type_loss": 0.250065,
+      "val_type_loss": 0.25632,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 27,
+      "train_loss": 0.106047,
+      "val_loss": 0.110516,
+      "train_spatial_loss": 0.031409,
+      "val_spatial_loss": 0.033161,
+      "train_type_loss": 0.248794,
+      "val_type_loss": 0.257849,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 28,
+      "train_loss": 0.106035,
+      "val_loss": 0.110013,
+      "train_spatial_loss": 0.031381,
+      "val_spatial_loss": 0.033001,
+      "train_type_loss": 0.248847,
+      "val_type_loss": 0.256708,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 29,
+      "train_loss": 0.105424,
+      "val_loss": 0.111368,
+      "train_spatial_loss": 0.031407,
+      "val_spatial_loss": 0.033726,
+      "train_type_loss": 0.246725,
+      "val_type_loss": 0.258807,
+      "lr": 0.0015
+    },
+    {
+      "epoch": 30,
+      "train_loss": 0.105871,
+      "val_loss": 0.1106,
+      "train_spatial_loss": 0.031271,
+      "val_spatial_loss": 0.0334,
+      "train_type_loss": 0.248666,
+      "val_type_loss": 0.257334,
+      "lr": 0.0015
+    }
+  ]
+}
